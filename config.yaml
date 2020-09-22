@@ -1,0 +1,11 @@
+teams:
+- name: Image Registry
+  peeps: 2
+  components:
+  - Image
+  - Image Registry
+- name: Admin Console
+  peeps: 11
+  components:
+  - Management Console
+  - Design

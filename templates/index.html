@@ -1,0 +1,41 @@
+<style>
+.red {
+    color: red;
+}
+</style>
+
+<a href="/">Back</a>
+
+<h1>{{.TeamName}}</h1>
+
+{{$BugzillaEndpoint := .BugzillaEndpoint}}
+{{$BugzillaQuery := .BugzillaQuery}}
+{{$Threshold := .Threshold}}
+
+{{range .Releases}}
+<h2>{{.Version}}</h2>
+{{if .GateIsOpen}}
+<h3>Feature Gate is OPEN</h3>
+{{else}}
+<h3 class="red">Feature Gate is CLOSED</h3>
+{{end}}
+
+<table>
+<tr{{if gt .BugCounts.MediumPlus $Threshold.MediumPlus}} class="red"{{end}}>
+    <td>total medium+ bugs:</td>
+    <td><a href="{{$BugzillaEndpoint}}buglist.cgi?{{$BugzillaQuery}}&amp;bug_severity=unspecified&amp;bug_severity=urgent&amp;bug_severity=high&amp;bug_severity=medium">{{.BugCounts.MediumPlus}}</a> (threshold: {{$Threshold.MediumPlus}})</td>
+</tr>
+<tr>
+    <td>release blocker bugs:</td>
+    <td><a href="{{$BugzillaEndpoint}}buglist.cgi?{{$BugzillaQuery}}&amp;bug_severity=unspecified&amp;bug_severity=urgent&amp;bug_severity=high&amp;bug_severity=medium&amp;target_release=---&amp;target_release={{.Version}}">{{.Blockers}}</a></td>
+</tr>
+<tr{{if gt .BugCounts.AgedBlockers $Threshold.AgedBlockers}} class="red"{{end}}>
+    <td style="padding-left: 2em">- older than 1 week:</td>
+    <td>{{.BugCounts.AgedBlockers}} (threshold: {{$Threshold.AgedBlockers}})</td>
+</tr>
+<tr{{if gt .BugCounts.RecentBlockers $Threshold.RecentBlockers}} class="red"{{end}}>
+    <td style="padding-left: 2em">- recently created:</td>
+    <td>{{.BugCounts.RecentBlockers}} (threshold: {{$Threshold.RecentBlockers}})</td>
+</tr>
+</table>
+{{end}}
